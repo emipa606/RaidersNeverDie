@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <RND.raiderDeaths>Raider deathchance: {0}</RND.raiderDeaths>
+  <RND.mechanoidDeaths>Mechanoid deathchance: {0}</RND.mechanoidDeaths>
+  <RND.animalDeaths>Animal deathchance: {0}</RND.animalDeaths>
+  <RND.ModVersion>Installed mod-version: {0}</RND.ModVersion>
+</LanguageData>
