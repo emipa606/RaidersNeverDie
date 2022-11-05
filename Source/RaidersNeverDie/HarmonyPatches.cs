@@ -23,23 +23,19 @@ internal static class HarmonyPatches
         harmony.Patch(targetmethod, prefixmethod);
     }
 
-    public static bool CheckForStateChange_Prefix(Pawn_HealthTracker __instance, DamageInfo? dinfo, Hediff hediff)
+    public static bool CheckForStateChange_Prefix(Pawn_HealthTracker __instance, DamageInfo? dinfo, Hediff hediff,
+        Pawn ___pawn)
     {
-        var traversed = Traverse.Create(__instance);
-        var pawn = traversed.Field("pawn").GetValue<Pawn>();
-        var forceIncap = traversed.Field("forceIncap").GetValue<bool>();
-        var shouldBeDead = traversed.Method("ShouldBeDead").GetValue<bool>();
-        var shouldBeDowned = traversed.Method("ShouldBeDowned").GetValue<bool>();
         if (__instance.Dead)
         {
             return false;
         }
 
-        if (shouldBeDead)
+        if (__instance.ShouldBeDead())
         {
-            if (!pawn.Destroyed)
+            if (!___pawn.Destroyed)
             {
-                pawn.Kill(dinfo, hediff);
+                ___pawn.Kill(dinfo, hediff);
             }
 
             return false;
@@ -47,11 +43,11 @@ internal static class HarmonyPatches
 
         if (!__instance.Downed)
         {
-            if (shouldBeDowned)
+            if (__instance.ShouldBeDowned())
             {
-                if (!forceIncap && dinfo.HasValue && dinfo.Value.Def.ExternalViolenceFor(pawn) &&
-                    !pawn.IsWildMan() && pawn.Faction is not { IsPlayer: true } &&
-                    pawn.HostFaction is not { IsPlayer: true })
+                if (!__instance.forceDowned && dinfo.HasValue && dinfo.Value.Def.ExternalViolenceFor(___pawn) &&
+                    !___pawn.IsWildMan() && ___pawn.Faction is not { IsPlayer: true } &&
+                    ___pawn.HostFaction is not { IsPlayer: true })
                 {
                     var animalChance = RNDSettings.animalDeaths * 0.5f;
                     var raiderChance = RNDSettings.raiderDeaths *
@@ -59,18 +55,16 @@ internal static class HarmonyPatches
                                             .Evaluate(StorytellerUtilityPopulation.PopulationIntent) *
                                         Find.Storyteller.difficulty.enemyDeathOnDownedChanceFactor);
                     var mechanoidChance = RNDSettings.mechanoidDeaths;
-                    var chance = pawn.RaceProps.Animal ? animalChance :
-                        !pawn.RaceProps.IsMechanoid ? raiderChance : mechanoidChance;
+                    var chance = ___pawn.RaceProps.Animal ? animalChance :
+                        !___pawn.RaceProps.IsMechanoid ? raiderChance : mechanoidChance;
                     if (Rand.Chance(chance))
                     {
-                        pawn.Kill(dinfo);
+                        ___pawn.Kill(dinfo);
                         return false;
                     }
                 }
 
-                Type[] t = { typeof(DamageInfo?), typeof(Hediff) };
-                object[] ps = { dinfo, hediff };
-                traversed.Method("MakeDowned", t, ps).GetValue();
+                __instance.MakeDowned(dinfo, hediff);
                 return false;
             }
 
@@ -79,42 +73,42 @@ internal static class HarmonyPatches
                 return false;
             }
 
-            if (pawn.carryTracker?.CarriedThing != null && pawn.jobs != null && pawn.CurJob != null)
+            if (___pawn.carryTracker?.CarriedThing != null && ___pawn.jobs != null && ___pawn.CurJob != null)
             {
-                pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
+                ___pawn.jobs.EndCurrentJob(JobCondition.InterruptForced);
             }
 
-            if (pawn.equipment?.Primary == null)
+            if (___pawn.equipment?.Primary == null)
             {
                 return false;
             }
 
-            if (pawn.kindDef.destroyGearOnDrop)
+            if (___pawn.kindDef.destroyGearOnDrop)
             {
-                pawn.equipment.DestroyEquipment(pawn.equipment.Primary);
+                ___pawn.equipment.DestroyEquipment(___pawn.equipment.Primary);
             }
-            else if (pawn.InContainerEnclosed)
+            else if (___pawn.InContainerEnclosed)
             {
-                pawn.equipment.TryTransferEquipmentToContainer(pawn.equipment.Primary, pawn.holdingOwner);
+                ___pawn.equipment.TryTransferEquipmentToContainer(___pawn.equipment.Primary, ___pawn.holdingOwner);
             }
-            else if (pawn.SpawnedOrAnyParentSpawned)
+            else if (___pawn.SpawnedOrAnyParentSpawned)
             {
-                pawn.equipment.TryDropEquipment(pawn.equipment.Primary, out _, pawn.PositionHeld);
+                ___pawn.equipment.TryDropEquipment(___pawn.equipment.Primary, out _, ___pawn.PositionHeld);
             }
             else
             {
-                pawn.equipment.DestroyEquipment(pawn.equipment.Primary);
+                ___pawn.equipment.DestroyEquipment(___pawn.equipment.Primary);
             }
 
             return false;
         }
 
-        if (shouldBeDowned)
+        if (__instance.ShouldBeDowned())
         {
             return false;
         }
 
-        traversed.Method("MakeUndowned").GetValue();
+        __instance.MakeUndowned(hediff);
         return false;
     }
 }

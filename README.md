@@ -2,7 +2,7 @@
 
 ![Image](https://i.imgur.com/buuPQel.png)
 
-Update of schplorgs,sems mod
+Update of schplorgs, sems mod
 https://steamcommunity.com/sharedfiles/filedetails/?id=1966580204
 
 ![Image](https://i.imgur.com/pufA0kM.png)
