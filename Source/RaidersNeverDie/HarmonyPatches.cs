@@ -31,14 +31,19 @@ internal static class HarmonyPatches
             return false;
         }
 
+        if (ModsConfig.BiotechActive && ___pawn.mechanitor != null)
+        {
+            ___pawn.mechanitor.Notify_HediffStateChange(hediff);
+        }
+
+        if (hediff != null && hediff.def.blocksSleeping && !___pawn.Awake())
+        {
+            return true;
+        }
+
         if (__instance.ShouldBeDead())
         {
-            if (!___pawn.Destroyed)
-            {
-                ___pawn.Kill(dinfo, hediff);
-            }
-
-            return false;
+            return true;
         }
 
         if (!__instance.Downed)
@@ -49,16 +54,28 @@ internal static class HarmonyPatches
                     !___pawn.IsWildMan() && ___pawn.Faction is not { IsPlayer: true } &&
                     ___pawn.HostFaction is not { IsPlayer: true })
                 {
+                    var deathless = ModsConfig.BiotechActive && ___pawn.genes?.HasGene(GeneDefOf.Deathless) == true;
                     var animalChance = RNDSettings.animalDeaths * 0.5f;
                     var raiderChance = RNDSettings.raiderDeaths *
-                                       (HealthTuning.DeathOnDownedChance_NonColonyHumanlikeFromPopulationIntentCurve
-                                            .Evaluate(StorytellerUtilityPopulation.PopulationIntent) *
+                                       ((Find.Storyteller.difficulty.unwaveringPrisoners
+                                            ? HealthTuning
+                                                .DeathOnDownedChance_NonColonyHumanlikeFromPopulationIntentCurve
+                                            : HealthTuning
+                                                .DeathOnDownedChance_NonColonyHumanlikeFromPopulationIntentCurve_WaveringPrisoners)
+                                        .Evaluate(StorytellerUtilityPopulation.PopulationIntent) *
                                         Find.Storyteller.difficulty.enemyDeathOnDownedChanceFactor);
                     var mechanoidChance = RNDSettings.mechanoidDeaths;
                     var chance = ___pawn.RaceProps.Animal ? animalChance :
                         !___pawn.RaceProps.IsMechanoid ? raiderChance : mechanoidChance;
-                    if (Rand.Chance(chance))
+                    if (!Rand.Chance(chance))
                     {
+                        if (deathless && !___pawn.Dead)
+                        {
+                            ___pawn.health.AddHediff(HediffDefOf.MissingBodyPart, ___pawn.health.hediffSet.GetBrain(),
+                                dinfo);
+                            return false;
+                        }
+
                         ___pawn.Kill(dinfo);
                         return false;
                     }

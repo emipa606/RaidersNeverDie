@@ -12,7 +12,7 @@ public class RNDSettingsController : Mod
     {
         GetSettings<RNDSettings>();
         currentVersion =
-            VersionFromManifest.GetVersionFromModMetaData(ModLister.GetActiveModWithIdentifier("Mlie.RaidersNeverDie"));
+            VersionFromManifest.GetVersionFromModMetaData(content.ModMetaData);
     }
 
     public override void DoSettingsWindowContents(Rect inRect)
@@ -23,6 +23,6 @@ public class RNDSettingsController : Mod
 
     public override string SettingsCategory()
     {
-        return "RaidersNeverDie";
+        return "Raiders Never Die";
     }
 }

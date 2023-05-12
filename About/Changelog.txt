@@ -1,5 +1,8 @@
 # Changelog for RaidersNeverDie
 
+1.4.3 - Should work better with deathless pawns now
+
+
 1.4.2 - Fixed the permadowned state of pawns
 
 
