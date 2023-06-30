@@ -1,4 +1,4 @@
-using System;
+using System.Reflection;
 using HarmonyLib;
 using RimWorld;
 using Verse;
@@ -7,24 +7,18 @@ using Verse.AI;
 namespace RaidersNeverDie;
 
 [StaticConstructorOnStartup]
-internal static class HarmonyPatches
+public static class HarmonyPatches
 {
     static HarmonyPatches()
     {
-        var harmony = new Harmony("rimworld.schplorg.raidersneverdie");
-        // CheckForStateChange Patch
-        SuperPatch(harmony, typeof(Pawn_HealthTracker), "CheckForStateChange", "CheckForStateChange_Prefix");
+        new Harmony("rimworld.schplorg.raidersneverdie").PatchAll(Assembly.GetExecutingAssembly());
     }
+}
 
-    private static void SuperPatch(Harmony harmony, Type t, string a, string b)
-    {
-        var targetmethod = AccessTools.Method(t, a);
-        var prefixmethod = new HarmonyMethod(typeof(HarmonyPatches).GetMethod(b));
-        harmony.Patch(targetmethod, prefixmethod);
-    }
-
-    public static bool CheckForStateChange_Prefix(Pawn_HealthTracker __instance, DamageInfo? dinfo, Hediff hediff,
-        Pawn ___pawn)
+[HarmonyPatch(typeof(Pawn_HealthTracker), "CheckForStateChange")]
+public class Pawn_HealthTracker_CheckForStateChange
+{
+    public static bool Prefix(Pawn_HealthTracker __instance, DamageInfo? dinfo, Hediff hediff, Pawn ___pawn)
     {
         if (__instance.Dead)
         {
@@ -65,9 +59,21 @@ internal static class HarmonyPatches
                                         .Evaluate(StorytellerUtilityPopulation.PopulationIntent) *
                                         Find.Storyteller.difficulty.enemyDeathOnDownedChanceFactor);
                     var mechanoidChance = RNDSettings.mechanoidDeaths;
-                    var chance = ___pawn.RaceProps.Animal ? animalChance :
-                        !___pawn.RaceProps.IsMechanoid ? raiderChance : mechanoidChance;
-                    if (!Rand.Chance(chance))
+                    float chance;
+                    if (___pawn.RaceProps.Animal)
+                    {
+                        chance = animalChance;
+                    }
+                    else if (___pawn.RaceProps.IsMechanoid)
+                    {
+                        chance = mechanoidChance;
+                    }
+                    else
+                    {
+                        chance = raiderChance;
+                    }
+
+                    if (Rand.Value <= chance)
                     {
                         if (deathless && !___pawn.Dead)
                         {

@@ -35,6 +35,4 @@ V1.0
 -  If you have the solution for a problem, please post it to the GitHub repository.
 
 
-
-
-https://steamcommunity.com/sharedfiles/filedetails/changelog/2024330186]Last updated 2023-05-12
+https://steamcommunity.com/sharedfiles/filedetails/changelog/2024330186]Last updated 2023-06-30

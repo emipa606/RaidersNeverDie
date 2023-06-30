@@ -11,16 +11,14 @@ public class RNDSettings : ModSettings
 
     public void DoWindowContents(Rect inRect)
     {
-        var viewRect = new Rect(0f, 0f, inRect.width, inRect.height);
-        var listingStandard = new Listing_Standard { maxOneColumn = true, ColumnWidth = viewRect.width };
-
-        listingStandard.Gap(40f);
+        var listingStandard = new Listing_Standard();
+        listingStandard.Begin(inRect);
         listingStandard.Label("RND.raiderDeaths".Translate(raiderDeaths.ToStringPercent()));
-        raiderDeaths = listingStandard.Slider(raiderDeaths, 0.0f, 10.0f);
+        raiderDeaths = listingStandard.Slider(raiderDeaths, 0.0f, 1.0f);
         listingStandard.Label("RND.mechanoidDeaths".Translate(mechanoidDeaths.ToStringPercent()));
-        mechanoidDeaths = listingStandard.Slider(mechanoidDeaths, 0.0f, 10.0f);
+        mechanoidDeaths = listingStandard.Slider(mechanoidDeaths, 0.0f, 1.0f);
         listingStandard.Label("RND.animalDeaths".Translate(animalDeaths.ToStringPercent()));
-        animalDeaths = listingStandard.Slider(animalDeaths, 0.0f, 10.0f);
+        animalDeaths = listingStandard.Slider(animalDeaths, 0.0f, 1.0f);
         if (RNDSettingsController.currentVersion != null)
         {
             listingStandard.Gap();
