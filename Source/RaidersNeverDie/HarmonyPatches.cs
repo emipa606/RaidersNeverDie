@@ -87,7 +87,9 @@ public class Pawn_HealthTracker_CheckForStateChange
                     }
                 }
 
-                __instance.MakeDowned(dinfo, hediff);
+                AccessTools.Method(typeof(Pawn_HealthTracker), "MakeDowned")
+                    .Invoke(__instance, [dinfo, hediff]);
+                //__instance.MakeDowned(dinfo, hediff);
                 return false;
             }
 
@@ -131,7 +133,9 @@ public class Pawn_HealthTracker_CheckForStateChange
             return false;
         }
 
-        __instance.MakeUndowned(hediff);
+        AccessTools.Method(typeof(Pawn_HealthTracker), "MakeUndowned")
+            .Invoke(__instance, [hediff]);
+        //__instance.MakeUndowned(hediff);
         return false;
     }
 }
