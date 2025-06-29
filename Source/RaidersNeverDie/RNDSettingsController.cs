@@ -6,12 +6,12 @@ namespace RaidersNeverDie;
 
 public class RNDSettingsController : Mod
 {
-    public static string currentVersion;
+    public static string CurrentVersion;
 
     public RNDSettingsController(ModContentPack content) : base(content)
     {
         GetSettings<RNDSettings>();
-        currentVersion =
+        CurrentVersion =
             VersionFromManifest.GetVersionFromModMetaData(content.ModMetaData);
     }
 
