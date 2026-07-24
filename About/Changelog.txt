@@ -1,5 +1,8 @@
 # Changelog for RaidersNeverDie
 
+1.6.2 - Fixed missing dependency
+
+
 1.6.1 - Fixed wrong author name
 
 
