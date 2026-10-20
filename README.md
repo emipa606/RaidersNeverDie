@@ -37,4 +37,4 @@ V1.0
 
  
 
-[![Image](https://img.shields.io/github/v/release/emipa606/RaidersNeverDie?label=latest%20version&style=plastic&color=9f1111&labelColor=black)](https://steamcommunity.com/sharedfiles/filedetails/changelog/2024330186) | tags: death chance
+[![Image](https://img.shields.io/github/v/release/emipa606/RaidersNeverDie?label=latest%20version&style=plastic&color=9f1111&labelColor=black)](https://steamcommunity.com/sharedfiles/filedetails/changelog/2024330186) | 1.6, Mod, 1.5, 1.2, 1.3, 1.0, 1.4, 1.1

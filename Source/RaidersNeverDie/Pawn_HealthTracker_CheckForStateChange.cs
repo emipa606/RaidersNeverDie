@@ -6,7 +6,7 @@ using Verse.AI;
 namespace RaidersNeverDie;
 
 [HarmonyPatch(typeof(Pawn_HealthTracker), nameof(Pawn_HealthTracker.CheckForStateChange))]
-public class Pawn_HealthTracker_CheckForStateChange
+public static class Pawn_HealthTracker_CheckForStateChange
 {
     public static bool Prefix(Pawn_HealthTracker __instance, DamageInfo? dinfo, Hediff hediff, Pawn ___pawn)
     {
